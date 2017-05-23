@@ -1,21 +1,26 @@
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.logging.LogRecord;
+
 
 /**
  * Created by Reaper on 5/22/17.
  */
-public class game extends Canvas implements Runnable{
+public class Game extends Canvas implements Runnable{
 
 
     public static final int WIDTH = 640, HEIGHT = WIDTH / 12 * 9; // nice aspect ratio
 
     private Thread thread; // entire game will run through this thread, single threaded is not the best
     private boolean running = false;
+    private Handler handler;
 
 
     // Constructor
-    public game(){
-        new window(WIDTH, HEIGHT, "GAME TIME!", this);
+    public Game(){
+
+        new Window(WIDTH, HEIGHT, "GAME TIME!", this);
+        handler = new Handler();
     }
 
     public synchronized void start(){
@@ -79,6 +84,7 @@ public class game extends Canvas implements Runnable{
     }
 
     private void tick(){
+        handler.tick();
 
     }
 
@@ -92,10 +98,10 @@ public class game extends Canvas implements Runnable{
         g.setColor(Color.black);
         g.fillRect(0, 0, WIDTH, HEIGHT);
 
-        g.dispose();
+        handler.render(g);
+
         bs.show();
-
-
+        g.dispose();
 
     }
 
@@ -105,7 +111,7 @@ public class game extends Canvas implements Runnable{
 
     public static void main(String[] args) {
 
-        new game();
+        new Game();
 
 
     }

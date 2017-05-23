@@ -5,9 +5,9 @@ import javax.swing.JFrame;
 import java.awt.Canvas;
 import java.awt.Dimension;
 
-public class window extends Canvas {
+public class Window extends Canvas {
 
-    public window(int width, int height, String title, game g){
+    public Window(int width, int height, String title, Game g){
 
             JFrame frame = new JFrame(title); // make new JFrame instance
 
