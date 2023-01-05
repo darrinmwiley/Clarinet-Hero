@@ -1,6 +1,13 @@
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import java.util.logging.LogRecord;
+
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 
 
 /**
@@ -14,6 +21,7 @@ public class Game extends Canvas implements Runnable{
     private Thread thread; // entire game will run through this thread, single threaded is not the best
     private boolean running = false;
     private Handler handler;
+    private SoundHandler soundHandler;
 
 
     // Constructor
@@ -21,6 +29,51 @@ public class Game extends Canvas implements Runnable{
 
         new Window(WIDTH, HEIGHT, "GAME TIME!", this);
         handler = new Handler();
+        soundHandler = new SoundHandler();
+        
+        Measure measure = new Measure();
+        measure.tempo = new Tempo(120);
+        measure.timeSignature = new TimeSignature(37,8);
+    	Note sixteenth = new Note(16, new Pitch(0));
+    	Note eighth = new Note(8, new Pitch(12));
+    	Note quarter = new Note(4, Pitch.REST);
+    	Note half = new Note(2, new Pitch(24));
+    	Note whole = new Note(1, new Pitch(0));
+    	
+    	measure.notes.add(new Note(1, Pitch.REST));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-8)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, Pitch.REST));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, Pitch.REST));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-1)));
+    	measure.notes.add(new Note(8, new Pitch(-1)));
+    	measure.notes.add(new Note(8, Pitch.REST));
+    	
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-8)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-4)));
+    	measure.notes.add(new Note(8, new Pitch(-6)));
+    	measure.notes.add(new Note(8, new Pitch(-8)));
+    	//measure.notes.add(eighth);
+    	
+    	soundHandler.playMeasureAsync(measure);
     }
 
     public synchronized void start(){
@@ -76,7 +129,7 @@ public class Game extends Canvas implements Runnable{
             // if one second has passed
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                System.out.println("FPS: " + frames); // display FPS
+                //System.out.println("FPS: " + frames); // display FPS
                 frames = 0; // reset FPS counter to one
             }
         }
