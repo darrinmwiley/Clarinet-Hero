@@ -14,7 +14,10 @@ def update_game_logic():
 
 # game_tick: main loop of the game.
 def game_tick():
-    pygame.event.pump() # required by game library, we may use these events later
+    #process system events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            return False #stop ticking if X button pressed
     update_game_logic()
     render()
     return True # return True to keep ticking, False to end
