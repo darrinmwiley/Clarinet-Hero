@@ -1,6 +1,7 @@
+package representation;
 
 public class Tempo {
-	int beatsPerMinute;
+	public int beatsPerMinute;
 	public Tempo(int bpm)
 	{
 		beatsPerMinute = bpm;

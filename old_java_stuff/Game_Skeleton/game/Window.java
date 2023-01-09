@@ -1,13 +1,16 @@
+package game;
+
 /**
  * Created by Reaper on 5/22/17.
  */
 import javax.swing.JFrame;
+
 import java.awt.Canvas;
 import java.awt.Dimension;
 
 public class Window extends Canvas {
 
-    public Window(int width, int height, String title, Game g){
+    public Window(int width, int height, String title, ClarinetHero g){
 
             JFrame frame = new JFrame(title); // make new JFrame instance
 

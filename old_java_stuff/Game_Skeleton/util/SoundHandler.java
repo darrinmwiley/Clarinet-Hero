@@ -1,3 +1,4 @@
+package util;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,10 @@ import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Synthesizer;
 
+import representation.Measure;
+import representation.Note;
+import representation.Pitch;
+
 public class SoundHandler {
 
 	Instrument[] instr;
@@ -17,7 +22,7 @@ public class SoundHandler {
 	
 	private static List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
 	private static MidiChannel[] channels;
-	private static int INSTRUMENT = 5; // 0 is a piano, 9 is percussion, other channels are for other instruments
+	private static int INSTRUMENT = 0; // 0 is a piano, 9 is percussion, other channels are for other instruments
 	private static int VOLUME = 80; // between 0 et 127
 	
 	public SoundHandler(){
@@ -101,35 +106,6 @@ public class SoundHandler {
 			channels[INSTRUMENT].noteOff(pitch.chromaticNumber + 67);
 	}
 	
-	/**
-	 * Plays the given note for the given duration
-	 */
-	private static void play(String note, int duration) throws InterruptedException
-	{
-			// * start playing a note
-			channels[INSTRUMENT].noteOn(id(note), VOLUME );
-			// * wait
-			Thread.sleep( duration );
-			// * stop playing a note
-			channels[INSTRUMENT].noteOff(id(note));
-	}
-	
-	/**
-	 * Plays nothing for the given duration
-	 */
-	private static void rest(int duration) throws InterruptedException
-	{
-		Thread.sleep(duration);
-	}
-	
-	/**
-	 * Returns the MIDI id for a given note: eg. 4C -> 60
-	 * @return
-	 */
-	private static int id(String note)
-	{
-		int octave = Integer.parseInt(note.substring(0, 1));
-		return notes.indexOf(note.substring(1)) + 12 * octave + 12;	
-	}
+
 	
 }

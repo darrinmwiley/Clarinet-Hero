@@ -1,23 +1,24 @@
+package representation;
 import java.util.ArrayList;
+
+import util.Rational;
 
 public class Measure {
 	
-	Tempo tempo;
-	TimeSignature timeSignature;
-	Clef clef;
-	ArrayList<Note> notes;
+	public Tempo tempo;
+	public TimeSignature timeSignature;
+	public ArrayList<Note> notes;
 	
-	public Measure(Tempo tempo, TimeSignature timeSignature, Clef clef)
+	public Measure(Tempo tempo, TimeSignature timeSignature)
 	{
 		this.tempo = tempo;
 		this.timeSignature = timeSignature;
-		this.clef = clef;
 		this.notes = new ArrayList<Note>();
 	}
 	
 	public Measure()
 	{
-		this(new Tempo(60), new TimeSignature(4,4), Clef.TREBLE);
+		this(new Tempo(60), new TimeSignature(4,4));
 	}
 	
 	public boolean validate()

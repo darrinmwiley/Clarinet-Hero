@@ -1,3 +1,4 @@
+package representation;
 
 public class Note {
 	
@@ -6,8 +7,8 @@ public class Note {
 	
 	//note is expressed in relation to quarter note
 	
-	int lengthDenominator;
-	Pitch pitch;
+	public int lengthDenominator;
+	public Pitch pitch;
 	
 	
 	public Note(int lengthDenominator, Pitch pitch)

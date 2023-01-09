@@ -1,37 +1,38 @@
+package game;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.util.Arrays;
 
-import javax.sound.midi.Instrument;
-import javax.sound.midi.MidiChannel;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Synthesizer;
+import sketch.FrequencyAnalyze;
+import util.SoundHandler;
 
 
 /**
  * Created by Reaper on 5/22/17.
  */
-public class Game extends Canvas implements Runnable{
+public class ClarinetHero extends Canvas implements Runnable{
 
 
     public static final int WIDTH = 640, HEIGHT = WIDTH / 12 * 9; // nice aspect ratio
 
     private Thread thread; // entire game will run through this thread, single threaded is not the best
     private boolean running = false;
-    private Handler handler;
     private SoundHandler soundHandler;
+    FrequencyAnalyze freq;
 
 
     // Constructor
-    public Game(){
+    public ClarinetHero(){
 
         new Window(WIDTH, HEIGHT, "GAME TIME!", this);
-        handler = new Handler();
-        soundHandler = new SoundHandler();
+        //soundHandler = new SoundHandler();
         
-        Measure measure = new Measure();
+        this.freq = new FrequencyAnalyze();
+        new Thread(freq).start();
+        
+        /*Measure measure = new Measure();
         measure.tempo = new Tempo(120);
         measure.timeSignature = new TimeSignature(37,8);
     	Note sixteenth = new Note(16, new Pitch(0));
@@ -73,7 +74,7 @@ public class Game extends Canvas implements Runnable{
     	measure.notes.add(new Note(8, new Pitch(-8)));
     	//measure.notes.add(eighth);
     	
-    	soundHandler.playMeasureAsync(measure);
+    	soundHandler.playMeasureAsync(measure);*/
     }
 
     public synchronized void start(){
@@ -137,7 +138,6 @@ public class Game extends Canvas implements Runnable{
     }
 
     private void tick(){
-        handler.tick();
 
     }
 
@@ -151,10 +151,19 @@ public class Game extends Canvas implements Runnable{
         g.setColor(Color.black);
         g.fillRect(0, 0, WIDTH, HEIGHT);
         
-        g.setColor(Color.RED);
-        g.fillRect(50, 50, 100, 100);
-
-        handler.render(g);
+        if(freq.magnitudes != null)
+        {
+        	double maxAmplitude = 0;
+        	for(double d:freq.magnitudes)
+        		maxAmplitude = Math.max(maxAmplitude, d);
+        	int pixelWidth = (int)(WIDTH / freq.magnitudes.length);
+        	g.setColor(Color.white);
+        	for(int i = 0;i<freq.magnitudes.length;i++)
+        	{
+        		int height =(int)(freq.magnitudes[i] / maxAmplitude * HEIGHT);
+        		g.fillRect(pixelWidth * i, HEIGHT - height, pixelWidth, height);
+        	}
+        }
 
         bs.show();
         g.dispose();
@@ -167,7 +176,7 @@ public class Game extends Canvas implements Runnable{
 
     public static void main(String[] args) {
 
-        new Game();
+        new ClarinetHero();
 
 
     }

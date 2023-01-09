@@ -1,8 +1,9 @@
+package util;
 import java.math.BigInteger;
 
 public class Rational {
-	long num;
-	long denom;
+	public long num;
+	public long denom;
 	
 	public Rational(long num, long denom)
 	{

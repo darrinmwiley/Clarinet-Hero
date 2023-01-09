@@ -1,7 +1,8 @@
+package representation;
 
 public class TimeSignature {
-	int numerator; // beatsPerMeasure 
-	int denominator; // beat note
+	public int numerator; // beatsPerMeasure 
+	public int denominator; // beat note
 	
 	public TimeSignature(int beatsPerMeasure, int beatNote)
 	{

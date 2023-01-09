@@ -1,3 +1,4 @@
+package representation;
 
 public class NoteLength {
 	//note length expressed as fraction 1/denom of a note
