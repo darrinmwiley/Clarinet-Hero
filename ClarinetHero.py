@@ -1,32 +1,36 @@
 import pygame
 import time
+from NavigationManager import NavigationManager
+from EventManager import EventManager
 
-WINDOW_WIDTH = 700
-WINDOW_HEIGHT = 700
+class ClarinetHero:
+    def __init__(self):
+        pygame.init() # library module
+        self.WINDOW_WIDTH = 700
+        self.WINDOW_HEIGHT = 700
+        self.display = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        self.navigationManager = NavigationManager()
+        self.eventManager = EventManager()
+        self.eventManager.addSubscriber(self, pygame.QUIT)
 
-# rendering will be done here
-def render():
-    pygame.display.flip()
+    # rendering will be done here
+    def render(self):
+        self.navigationManager.render(self.display)
+        pygame.display.flip()
 
-# detection and timing will be done here
-def update_game_logic():
-    pass
+    # detection and timing will be done here
+    def updateGameLogic(self):
+        self.eventManager.update()
 
-# game_tick: main loop of the game.
-def game_tick():
-    #process system events
-    for event in pygame.event.get():
+    def start(self):
+        self.running = True
+        while self.running:
+            self.updateGameLogic()
+            self.render()
+
+    def processEvent(self, event):
         if event.type == pygame.QUIT:
-            return False #stop ticking if X button pressed
-    update_game_logic()
-    render()
-    return True # return True to keep ticking, False to end
-
-# init: called before the game starts ticking - do setup here
-def init():
-    pygame.init() # library module
-    window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+            self.running = False
 
 if __name__ == '__main__':
-    init()
-    while game_tick(): continue
+    ClarinetHero().start()
