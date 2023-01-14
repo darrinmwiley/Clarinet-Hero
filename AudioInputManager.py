@@ -113,6 +113,6 @@ class AudioInputManager:
     #200
     def predict(self, snippetLengthMs):
         if self.getMostRecentSnippet(snippetLengthMs):
-            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.8, frame_threshold=.7, minimum_frequency=27.5, maximum_frequency=4186)
+            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.5, frame_threshold=.5, minimum_frequency=27.5, maximum_frequency=4186)
             return note_activations
         return []
