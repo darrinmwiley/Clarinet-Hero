@@ -1,7 +1,7 @@
 import pygame
-import time
 from NavigationManager import NavigationManager
 from EventManager import EventManager
+from AudioInputManager import AudioInputManager
 
 class ClarinetHero:
     def __init__(self):
@@ -9,16 +9,16 @@ class ClarinetHero:
         self.WINDOW_WIDTH = 700
         self.WINDOW_HEIGHT = 700
         self.display = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
-        self.navigationManager = NavigationManager()
         self.eventManager = EventManager()
+        self.audioInputManager = AudioInputManager()
+        self.serviceRegistry = {"CLARINETHERO": self, "EVENTMANAGER": self.eventManager, "AUDIOINPUTMANAGER": self.audioInputManager}
+        self.navigationManager = NavigationManager(self.serviceRegistry)
         self.eventManager.addSubscriber(self, pygame.QUIT)
 
-    # rendering will be done here
     def render(self):
         self.navigationManager.render(self.display)
         pygame.display.flip()
 
-    # detection and timing will be done here
     def updateGameLogic(self):
         self.eventManager.update()
 

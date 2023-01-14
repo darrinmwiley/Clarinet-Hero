@@ -52,15 +52,6 @@ def getMostRecentSnippet(length_ms):
     return False
 
 if __name__ == '__main__':
-    model_output, midi_data, note_activations = predict("chopsticks.mp3", basic_pitch_model)
-    for tuple in note_activations:
-        start_time_s = tuple[0]
-        end_time_s = tuple[1]
-        pitch = tuple[2]
-        velocity = tuple[3]
-        print(start_time_s, end_time_s, pitch, velocity);
-
-if __name__ == '__main__':
     # initializing imported module
     pygame.init()
 
@@ -78,8 +69,7 @@ if __name__ == '__main__':
     # keep game running till running is true
     while running:
         if getMostRecentSnippet(200):
-            getMostRecentSnippet(200)
-            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.4, frame_threshold=.2, minimum_frequency=27.5, maximum_frequency=4186)
+            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.8, frame_threshold=.7, minimum_frequency=27.5, maximum_frequency=4186)
             pitches = []
             pygame.draw.rect(window, (0,0,0), pygame.Rect(0,0,400,500))
             for tuple in note_activations:
