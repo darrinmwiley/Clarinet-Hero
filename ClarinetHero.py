@@ -1,26 +1,26 @@
 import pygame
-from NavigationManager import NavigationManager
-from EventManager import EventManager
-from AudioInputManager import AudioInputManager
+from ScreenHandler import ScreenHandler
+from EventHandler import EventHandler
+from AudioHandler import AudioHandler
 
 class ClarinetHero:
     def __init__(self):
         pygame.init() # library module
         self.WINDOW_WIDTH = 700
         self.WINDOW_HEIGHT = 700
-        self.display = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
-        self.eventManager = EventManager()
-        self.audioInputManager = AudioInputManager()
-        self.serviceRegistry = {"CLARINETHERO": self, "EVENTMANAGER": self.eventManager, "AUDIOINPUTMANAGER": self.audioInputManager}
-        self.navigationManager = NavigationManager(self.serviceRegistry)
-        self.eventManager.addSubscriber(self, pygame.QUIT)
+        self.display: pygame.Surface = pygame.display.set_mode((self.WINDOW_WIDTH, self.WINDOW_HEIGHT))
+        self.eventHandler = EventHandler()
+        self.audioHandler = AudioHandler()
+        self.serviceRegistry = {"CLARINETHERO": self, "EVENTHANDLER": self.eventHandler, "AUDIOHANDLER": self.audioHandler}
+        self.screenHandler = ScreenHandler(self.serviceRegistry)
+        self.eventHandler.addSubscriber(self, pygame.QUIT)
 
     def render(self):
-        self.navigationManager.render(self.display)
+        self.screenHandler.render(self.display)
         pygame.display.flip()
 
     def updateGameLogic(self):
-        self.eventManager.update()
+        self.eventHandler.update()
 
     def start(self):
         self.running = True
@@ -28,7 +28,7 @@ class ClarinetHero:
             self.updateGameLogic()
             self.render()
 
-    def processEvent(self, event):
+    def processEvent(self, event: pygame.event):
         if event.type == pygame.QUIT:
             self.running = False
 

@@ -1,16 +1,19 @@
-from Buttons import RectangularButton
-from AudioInputManager import AudioInputManager
+from TextButton import TextButton
+from AudioHandler import AudioHandler
+from Component import Component
 import time
 import pygame
 
-class TuningNavigationState:
+class TuningScreen(Component):
     def __init__(self, serviceRegistry):
+        super().__init__()
         #todo: have service injection manager
-        self.audioInputManager = serviceRegistry["AUDIOINPUTMANAGER"]
-        self.audioInputManager.startRecording()
-        self.navigationManager = serviceRegistry["NAVIGATIONMANAGER"]
-        backToMainMenu = RectangularButton(100,475,500,100,"back to main menu")
-        backToMainMenu.onClicked = lambda:self.navigationManager.navigate("MAIN_MENU")
+        self.audioHandler = serviceRegistry["AUDIOHANDLER"]
+        self.audioHandler.startRecording()
+        self.screenHandler = serviceRegistry["SCREENHANDLER"]
+        backToMainMenu = TextButton("back to main menu")
+        self.add(backToMainMenu, (100,475), (500, 100))
+        backToMainMenu.onClicked = lambda:self.screenHandler.navigate("MAIN_MENU")
         self.buttons = [backToMainMenu]
 
     def processEvent(self,event):
@@ -21,7 +24,7 @@ class TuningNavigationState:
 
     def render(self, display):
         #TODO offboard this to a thread
-        note = self.audioInputManager.predictNoteAtTimestamp(time.time() * 1000 - 200)
+        note = self.audioHandler.predictNoteAtTimestamp(time.time() * 1000 - 200)
         pygame.draw.rect(display, (208,206,164), pygame.Rect(0,0,700,700))
         font = pygame.font.SysFont('Comic Sans MS', 30)
         text_surface = font.render(self.midiToNote(note), False, (0,0,0))

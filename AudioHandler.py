@@ -22,14 +22,16 @@ RATE = 22050 # sampling rate per second
 # due to paInt16 format, every sample is 2 bytes
 SAMPLES_PER_MS = RATE/1000;
 
-class AudioInputManager:
+#todo - split prediction from audio IO
+
+class AudioHandler:
     def __init__(self):
         self.pyaudio = pyaudio.PyAudio()
         self.audioStream = self.pyaudio.open(format=FORMAT,channels=CHANNELS,rate=RATE,input=True,frames_per_buffer=CHUNK);
-        self.storedPredictions = []
+        self.storedPredictions: list[Prediction] = []
 
     def startRecording(self):
-        self.frames = []
+        self.frames: list[bytes] = []
         self.samples = bytearray(b'')
         t = threading.Thread(target = self.audioCapture)
         t.daemon = True
@@ -42,11 +44,11 @@ class AudioInputManager:
     def stopRecording(self):
         self.recording = False
         #maybe analyze current frames before clearing here
-        self.frames = []
+        self.frames.clear()
 
     def audioCapture(self):
         while self.recording:
-            data = self.audioStream.read(CHUNK)
+            data: bytes = self.audioStream.read(CHUNK)
             self.frames.append(data)
             self.samples.extend(data)
 
@@ -65,25 +67,22 @@ class AudioInputManager:
         while R - L > 1:
             M = int((L + R) // 2)
             prediction = self.storedPredictions[M]
-            #print(prediction.snippetStartTimeMs, prediction.snippetEndTimeMs, timestampMillis)
             if prediction.snippetStartTimeMs <= timestampMillis:
-                #print("L = M")
                 L = M
             else:
-                #print("R = M")
                 R = M
         currentIndex = L
         noteCount = dict()
-        #print(self.storedPredictions[currentIndex].snippetStartTimeMs, self.storedPredictions[currentIndex].snippetEndTimeMs, timestampMillis, "(final)")
+        relevantFrames = 0
         while currentIndex >= 0 and self.storedPredictions[currentIndex].snippetEndTimeMs > timestampMillis:
             prediction = self.storedPredictions[currentIndex]
-            #print(timestampMillis, prediction.snippetStartTimeMs, prediction.snippetEndTimeMs, prediction.noteActivations)
             noteActivations = self.storedPredictions[currentIndex].noteActivations
-            #if len(noteActivations) == 0:
-            #    pitch = -1
-            #    if pitch not in noteCount:
-            #        noteCount[pitch] = 0
-            #    noteCount[pitch] = noteCount[pitch] + 1
+            if len(noteActivations) == 0:
+                pitch = -1
+                if pitch not in noteCount:
+                    noteCount[pitch] = 0
+                noteCount[pitch] = noteCount[pitch] + 1
+            relevantFrames+=1
             for activation in noteActivations:
                 pitch = activation[2]
                 if pitch not in noteCount:
@@ -96,7 +95,10 @@ class AudioInputManager:
             if value > max:
                 max = value
                 note = key
-        return note
+        if max > relevantFrames / 2:
+            return note
+        else:
+            return -1
 
     def getMostRecentSnippet(self, length_ms):
         num_samples = int(length_ms * SAMPLES_PER_MS)
@@ -113,6 +115,6 @@ class AudioInputManager:
     #200
     def predict(self, snippetLengthMs):
         if self.getMostRecentSnippet(snippetLengthMs):
-            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.5, frame_threshold=.5, minimum_frequency=27.5, maximum_frequency=4186)
+            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.6, frame_threshold=.6, minimum_frequency=27.5, maximum_frequency=4186)
             return note_activations
         return []
