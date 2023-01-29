@@ -36,6 +36,7 @@ class Component():
         self.children.append(child)
 
     def onAddedToParent(self, parent, coordinates, size):
+        print(self, "added to ", parent, coordinates, size)
         self.setRelativePosition(coordinates)
         self.setSize(size)
         self.setParent(parent)
@@ -69,7 +70,6 @@ class Component():
             return True
         (abslX, abslY) = self.getAbsolutePosition()
         (wid, ht) = self.getSize()
-        print(self, abslX, abslY, wid, ht)
         return abslX <= x <= abslX + wid and abslY <= y <= abslY + ht
 
     def processEvent(self, event):

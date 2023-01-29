@@ -17,16 +17,16 @@ public class SoundHandler {
 
 	Instrument[] instr;
 	MidiChannel[] mChannels;
-	
+
 	Synthesizer midiSynth;
-	
+
 	private static List<String> notes = Arrays.asList("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B");
 	private static MidiChannel[] channels;
 	private static int INSTRUMENT = 0; // 0 is a piano, 9 is percussion, other channels are for other instruments
 	private static int VOLUME = 80; // between 0 et 127
-	
+
 	public SoundHandler(){
-		
+
 		try {
 			// * Open a synthesizer
 			Synthesizer synth = MidiSystem.getSynthesizer();
@@ -39,7 +39,7 @@ public class SoundHandler {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void playMeasureAsync(Measure measure)
 	{
 		int BPM = measure.tempo.beatsPerMinute;
@@ -73,39 +73,39 @@ public class SoundHandler {
 			}
 		}
 	}
-	
+
 	private class noteEvent{
-		
+
 		Rational time;
 		boolean start;
 		Pitch pitch;
-		
+
 		public noteEvent(Rational time, boolean start, Pitch pitch)
 		{
 			this.time = time;
 			this.start = start;
 			this.pitch = pitch;
 		}
-		
+
 		public String toString()
 		{
 			return "("+time+" "+start+" "+pitch.chromaticNumber+")";
 		}
-		
+
 	}
-	
+
 	public void noteOn(Pitch pitch)
 	{
 		if(pitch != Pitch.REST)
 			channels[INSTRUMENT].noteOn(pitch.chromaticNumber + 67, VOLUME );
 	}
-	
+
 	public void noteOff(Pitch pitch)
 	{
 		if(pitch != Pitch.REST)
 			channels[INSTRUMENT].noteOff(pitch.chromaticNumber + 67);
 	}
-	
 
-	
+
+
 }

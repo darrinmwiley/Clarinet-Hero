@@ -2,6 +2,7 @@ from TextButton import TextButton
 from MainMenuScreen import MainMenuScreen
 from TuningScreen import TuningScreen
 from LibraryScreen import LibraryScreen
+from PlayerScreen import PlayerScreen
 from Component import Component
 import pygame
 
@@ -18,7 +19,8 @@ class ScreenHandler(Component):
         self.eventManager.addSubscriber(self, pygame.MOUSEBUTTONUP)
         self.screensByKeyword["MAIN_MENU"] = MainMenuScreen(serviceRegistry)
         self.screensByKeyword["TUNING"] = TuningScreen(serviceRegistry)
-        self.screensByKeyword["LIBRARY"] = LibraryScreen(serviceRegistry)
+        #self.screensByKeyword["LIBRARY"] = LibraryScreen(serviceRegistry)
+        self.screensByKeyword["PLAYER"] = PlayerScreen(serviceRegistry)
         self.navigate("MAIN_MENU")
 
     def navigate(self, keyword):

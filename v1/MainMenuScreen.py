@@ -11,7 +11,7 @@ class MainMenuScreen(Component):
         tuningButton = TextButton("tuning")
         self.add(startButton, (100, 585), (500, 100))
         self.add(tuningButton, (100, 475), (500, 100))
-        startButton.onClicked = lambda:self.screenHandler.navigate("LIBRARY")
+        startButton.onClicked = lambda:self.screenHandler.navigate("PLAYER")
         tuningButton.onClicked = lambda:self.screenHandler.navigate("TUNING")
         self.buttons = [ startButton, tuningButton]
         self.image = pygame.image.load('resources/clarinethero.png')
