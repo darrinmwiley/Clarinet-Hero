@@ -1,14 +1,16 @@
 import pygame
 import pygame_gui
-from MainMenuScreenV2 import MainMenuScreenV2
+from MainMenuScreen import MainMenuScreen
 from AudioManager import AudioManager
 from PredictionManager import PredictionManager
+from PlayScreen import PlayScreen
 
 class NavManager:
 
     def __init__(self, services):
         self.screens = dict()
-        self.screens["MAINMENU"] = MainMenuScreenV2(services)
+        self.screens["MAINMENU"] = MainMenuScreen(services)
+        self.screens["PLAY"] = PlayScreen()
         self.set_current_screen("MAINMENU")
         services["EVENTMANAGER"].add_listener(self)
 

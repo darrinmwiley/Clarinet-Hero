@@ -40,7 +40,7 @@ class PlayerScreen(Component):
             startX = int(totalDuration * pixelsPerSecond)
             distanceFromBottom = (note.pitch - BOTTOM_NOTE + 1) * verticalPixelsPerNote
             startY = int(700 - (verticalPixelsPerNote * (note.pitch - BOTTOM_NOTE)))
-            durationInSeconds = (timeSignature.beatNote / note.lengthDenominator)
+            durationInSeconds = (timeSignature.beatNote / note.lengthDenominator)#this seems wrong
             wid = int(durationInSeconds * pixelsPerSecond)
             totalDuration += durationInSeconds * secondsPerBeat
             pygame.draw.rect(display, (255,255,255), pygame.Rect(startX, startY, wid, verticalPixelsPerNote))

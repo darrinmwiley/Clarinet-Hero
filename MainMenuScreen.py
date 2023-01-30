@@ -1,7 +1,7 @@
 import pygame
 import pygame_gui
 
-class MainMenuScreenV2:
+class MainMenuScreen:
 
     def __init__(self, services):
         self.ui = pygame_gui.UIManager((800,600))
@@ -10,7 +10,7 @@ class MainMenuScreenV2:
         self.logo = pygame.image.load('resources/clarinethero.png')
         self.logo = pygame.transform.scale(self.logo, (750, 425))
         self.onButtonPress = dict()
-        self.onButtonPress[start_button] = lambda:  print("start clicked")
+        self.onButtonPress[start_button] = lambda:  services["NAVMANAGER"].set_current_screen("PLAY")
         self.onButtonPress[settings_button] = lambda: print("settings clicked")
 
     def process_events(self,event):
@@ -18,7 +18,6 @@ class MainMenuScreenV2:
         if(event.type == pygame_gui.UI_BUTTON_PRESSED):
             if event.ui_element in self.onButtonPress:
                 self.onButtonPress[event.ui_element]()
-
 
     def update(self, time_delta):
         self.ui.update(time_delta)

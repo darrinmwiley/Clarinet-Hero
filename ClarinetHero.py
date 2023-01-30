@@ -6,7 +6,7 @@ from EventManager import EventManager
 from NavManager import NavManager
 from PredictionManager import PredictionManager
 
-class ClarinetHeroV2:
+class ClarinetHero:
     def __init__(self):
         pygame.init() # library module
         self.display = pygame.display.set_mode((800,600))
@@ -40,4 +40,4 @@ class ClarinetHeroV2:
             self.running = False
 
 if __name__ == '__main__':
-    ClarinetHeroV2().start()
+    ClarinetHero().start()
