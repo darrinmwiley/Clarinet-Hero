@@ -8,12 +8,16 @@ import tensorflow as tf
 from basic_pitch.inference import predict
 from basic_pitch import ICASSP_2022_MODEL_PATH
 
-basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
-
 class PredictionManager:
     def __init__(self, services):
         self.services = services
         self.stored_predictions: list[Prediction] = []
+        t = threading.Thread(target = self.load_model)
+        t.daemon = True
+        t.start()
+
+    def load_model(self):
+        self.basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
 
     def store_predictions(self, snippet_length_ms = 200):
         while self.services["AUDIOMANAGER"].recording:
@@ -64,6 +68,6 @@ class PredictionManager:
 
     def predict(self, snippet_length_ms = 200):
         if self.services["AUDIOMANAGER"].get_most_recent_snippet(snippet_length_ms):
-            model_output, midi_data, note_activations = predict("sample.wav", basic_pitch_model, onset_threshold=.6, frame_threshold=.6, minimum_frequency=27.5, maximum_frequency=4186)
+            model_output, midi_data, note_activations = predict("sample.wav", self.basic_pitch_model, onset_threshold=.6, frame_threshold=.6, minimum_frequency=27.5, maximum_frequency=4186)
             return note_activations
         return []

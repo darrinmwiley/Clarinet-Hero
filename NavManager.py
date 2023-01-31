@@ -10,7 +10,7 @@ class NavManager:
     def __init__(self, services):
         self.screens = dict()
         self.screens["MAINMENU"] = MainMenuScreen(services)
-        self.screens["PLAY"] = PlayScreen()
+        self.screens["PLAY"] = PlayScreen(services)
         self.set_current_screen("MAINMENU")
         services["EVENTMANAGER"].add_listener(self)
 

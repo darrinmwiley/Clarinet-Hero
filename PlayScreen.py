@@ -11,17 +11,18 @@ from PlayConfig import PlayConfig
 
 class PlayScreen:
 
-    def __init__(self):
+    def __init__(self, services):
+        self.services = services
         self.load(PlayConfig()
                     .newBuilder()
-                    .set_score(self.from_file("fmajor.musicxml"))
+                    .set_score(services["CONTENTMANAGER"].load_musicxml("fmajor.musicxml"))
                     .set_bpm(60)
                     .build())
         self.started = False
 
     def load(self, config):
         self.config = config
-        self.audioBytes = self.toAudioBytes(config.score, config.bpm)
+        self.audio_bytes = self.services["AUDIOMANAGER"].to_audio_bytes(config.score, config.bpm)
 
     def draw_staff(self, display):
         display_width = display.get_width()
@@ -58,21 +59,17 @@ class PlayScreen:
         seconds_per_beat = 60/bpm
         seconds_to_display = self.config.seconds_to_display
         pixels_per_second = remaining_display_width / seconds_to_display
-
-
         beat_offset = note.activeSite.offset + note.offset
         time_offset = seconds_per_beat * beat_offset
-        startX = int((time_offset - elapsed_seconds) * pixels_per_second)
-        durationInSeconds = (time_signature_denominator / 4) * note.quarterLength * seconds_per_beat
-        wid = int(durationInSeconds * pixels_per_second)
-
-        if (startX + wid) > 0 and startX < remaining_display_width:
+        start_x = int((time_offset - elapsed_seconds) * pixels_per_second)
+        duration_in_seconds = (time_signature_denominator / 4) * note.quarterLength * seconds_per_beat
+        wid = int(duration_in_seconds * pixels_per_second)
+        if (start_x + wid) > 0 and start_x < remaining_display_width:
             diatonic_pitch = note.pitch.diatonicNoteNum
             distanceFromBottom = (diatonic_pitch - bottom_note_diatonic + 1) * vertical_pixels_per_note
             startY = int(display_height - (vertical_pixels_per_note * (diatonic_pitch - bottom_note_diatonic)) - vertical_pixels_per_note / 2)
-            endX = min(startX + wid, remaining_display_width)
-            actualStartX = max(0, startX)
-            #idea: draw note to its own surface and then take the subsurface that is still on the screen
+            endX = min(start_x + wid, remaining_display_width)
+            actualstart_x = max(0, start_x)
             note_surface = Surface((wid, vertical_pixels_per_note * 2))
             pygame.draw.rect(note_surface, (220,220,220), pygame.Rect((0,0),(wid, vertical_pixels_per_note * 2)))
             pygame.draw.circle(note_surface, (20,20,20), (int(vertical_pixels_per_note), int(vertical_pixels_per_note)), int(vertical_pixels_per_note))
@@ -83,20 +80,16 @@ class PlayScreen:
             text_x = (wid - text_surface.get_width()) / 2
             text_y = (vertical_pixels_per_note * 2 - text_surface.get_height()) / 2
             note_surface.blit(text_surface, (text_x, text_y))
-            if startX < 0:
-                note_surface = note_surface.subsurface(pygame.Rect(int(-startX),0,int(wid + startX), int(vertical_pixels_per_note * 2)))
-            display.blit(note_surface, (actualStartX + self.treble_clef_width,startY))
+            if start_x < 0:
+                note_surface = note_surface.subsurface(pygame.Rect(int(-start_x),0,int(wid + start_x), int(vertical_pixels_per_note * 2)))
+            display.blit(note_surface, (actualstart_x + self.treble_clef_width,startY))
 
     def start(self):
-        self.score = self.from_file("fmajor.musicxml")
         self.start_time = time.time()
         self.started = True;
-        t = threading.Thread(target = lambda: self.play(self.audioBytes))
+        t = threading.Thread(target = lambda: self.services["AUDIOMANAGER"].play(self.audio_bytes))
         t.daemon = True
         t.start()
-
-    def from_file(self, file_path):
-        return music21.converter.parse(file_path)
 
     def process_events(self,event):
         if(event.type == pygame.MOUSEBUTTONDOWN):
@@ -104,39 +97,6 @@ class PlayScreen:
 
     def update(self, time_delta):
         pass
-
-    def toAudioBytes(self, score, bpm):
-        secondsPerBeat = 60 / bpm
-        totalBeats = 0
-        output_bytes=bytearray(b'')
-        time_signature_numerator = 4
-        time_signature_denominator = 4
-        for component in score.recurse():
-            if isinstance(component, music21.meter.TimeSignature):
-                time_signature_numerator = component.numerator
-                time_signature_denominator = component.denominator
-            if isinstance(component, music21.stream.Measure):
-                for sub in component.recurse():
-                    if isinstance(sub, music21.note.Note):
-                        durationInSeconds = (time_signature_denominator / 4) * sub.quarterLength * secondsPerBeat
-                        num_samples = int(44100 * durationInSeconds)
-                        samples = [math.sin(2 * math.pi * k * sub.pitch.frequency / 44100) for k in range(0, num_samples)]
-                        output_bytes.extend(array.array('f', samples).tobytes())
-                    if isinstance(sub, music21.note.Rest):
-                        durationInSeconds = (time_signature_denominator / 4) * sub.quarterLength * secondsPerBeat
-                        num_samples = int(44100 * durationInSeconds)
-                        samples = [0 for k in range(0, num_samples)]
-                        output_bytes.extend(array.array('f', samples).tobytes())
-        return bytes(output_bytes)
-
-    def play(self, bytes):
-        print("playing")
-        p = pyaudio.PyAudio()
-        stream = p.open(format=pyaudio.paFloat32,
-                channels=1,
-                rate=44100,
-                output=True)
-        stream.write(bytes)
 
     def render(self, display):
         pygame.draw.rect(display, (220, 220, 220), pygame.Rect(0,0,800,600))

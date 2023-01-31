@@ -13,8 +13,8 @@ class ClarinetHero:
         self.services = dict()
         self.services["CONTENTMANAGER"] = ContentManager()
         self.services["EVENTMANAGER"] = EventManager()
-        self.services["NAVMANAGER"] = NavManager(self.services)
         self.services["AUDIOMANAGER"] = AudioManager()
+        self.services["NAVMANAGER"] = NavManager(self.services)
         self.services["PREDICTIONMANAGER"] = PredictionManager(self.services)
         self.services["EVENTMANAGER"].add_subscriber(self, pygame.QUIT)
 
